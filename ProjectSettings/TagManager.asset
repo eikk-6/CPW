@@ -10,6 +10,8 @@ TagManager:
   - PlayerHand
   - Destroyer
   - DeathZone
+  - Weapon
+  - EnemyWeapon
   layers:
   - Default
   - TransparentFX

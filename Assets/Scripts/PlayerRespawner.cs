@@ -41,16 +41,16 @@ public class PlayerRespawner : NetworkBehaviour
     {
         Vector3 respawnPos = AnchorSelector.RespawnPosition;
         Debug.Log("리스폰 위치: " + respawnPos);
+        Debug.Log("리스폰 위치로 이동합니다");
 
         NetworkTransform nt = GetComponent<NetworkTransform>();
         if (nt != null)
         {
-            nt.Teleport(respawnPos, transform.rotation, transform.localScale); // 서버 권한에서만 적용됨
-            Debug.Log("Teleport 성공");
+            nt.Teleport(respawnPos, Quaternion.identity, Vector3.one);  // 회전은 유지하고 싶다면 transform.rotation 사용
         }
         else
         {
-            Debug.LogWarning("NetworkTransform 없음");
+            Debug.LogWarning("NetworkTransform 컴포넌트를 찾을 수 없습니다.");
         }
     }
 }
