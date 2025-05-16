@@ -21,6 +21,14 @@ public class BatteryHealth : MonoBehaviour
             if (batteryHp <= 0)
             {
                 Debug.Log("배터리 체력 0! 오브젝트 제거");
+
+                // 배터리가 파괴되면 플레이어 게임 종료
+                PlayerRespawner respawner = GameObject.FindWithTag("Player")?.GetComponent<PlayerRespawner>();
+                if (respawner != null && respawner.IsOwner)
+                {
+                    respawner.EndGameServerRpc();
+                }
+
                 Destroy(gameObject);
             }
         }

@@ -1,56 +1,46 @@
 using UnityEngine;
 using Unity.Netcode;
-using UnityEngine.InputSystem;
-using Unity.Netcode.Components;
 
-[RequireComponent(typeof(NetworkTransform))]
 public class PlayerRespawner : NetworkBehaviour
 {
-    public InputActionAsset inputActions;
-    private InputAction respawnAction;
+    public static Vector3 savedRespawnPos = Vector3.zero;
 
-    void OnEnable()
+    // 리스폰 위치 저장
+    public void SaveRespawnPosition(Vector3 pos)
     {
-        if (inputActions != null)
-        {
-            respawnAction = inputActions.FindAction("Respawn", true);
-            respawnAction.Enable();
-            Debug.Log("Respawn 액션 활성화됨");
-        }
+        savedRespawnPos = pos;
     }
 
-    void OnDisable()
-    {
-        if (respawnAction != null)
-            respawnAction.Disable();
-    }
-
-    void Update()
-    {
-        if (!IsOwner || respawnAction == null) return;
-
-        if (respawnAction.WasPressedThisFrame())
-        {
-            Debug.Log("A 버튼 누름 - 리스폰 실행");
-            RespawnAtSavedLocationServerRpc();
-        }
-    }
-
-    [ServerRpc]
+    // 서버 RPC로 리스폰 요청
+    [ServerRpc(RequireOwnership = false)]
     public void RespawnAtSavedLocationServerRpc()
     {
-        Vector3 respawnPos = AnchorSelector.RespawnPosition;
-        Debug.Log("리스폰 위치: " + respawnPos);
-        Debug.Log("리스폰 위치로 이동합니다");
-
-        NetworkTransform nt = GetComponent<NetworkTransform>();
-        if (nt != null)
+        if (savedRespawnPos != Vector3.zero)
         {
-            nt.Teleport(respawnPos, Quaternion.identity, Vector3.one);  // 회전은 유지하고 싶다면 transform.rotation 사용
+            Debug.Log("서버에서 리스폰 위치로 이동: " + savedRespawnPos);
+            transform.position = savedRespawnPos;
         }
         else
         {
-            Debug.LogWarning("NetworkTransform 컴포넌트를 찾을 수 없습니다.");
+            Debug.LogWarning("리스폰 위치가 설정되지 않음. 게임 종료 시도");
+            EndGameServerRpc();
         }
+    }
+
+    // 서버에서 클라이언트 종료 명령 전송
+    [ServerRpc(RequireOwnership = false)]
+    public void EndGameServerRpc()
+    {
+        Debug.Log("게임 종료 요청됨 (서버)");
+
+        EndGameClientRpc();
+    }
+
+    // 클라이언트가 종료 동작 실행
+    [ClientRpc]
+    private void EndGameClientRpc()
+    {
+        Debug.Log("클라이언트에서 게임 종료 실행");
+        GameExitUtil.ExitGame();
     }
 }

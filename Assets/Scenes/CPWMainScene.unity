@@ -317,8 +317,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  inputActions: {fileID: -944628639613478452, guid: 13433290f447e864da07e445ee3305ff,
-    type: 3}
 --- !u!54 &155607141
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2517,6 +2515,8 @@ GameObject:
   - component: {fileID: 1762233196}
   - component: {fileID: 1762233195}
   - component: {fileID: 1762233194}
+  - component: {fileID: 1762233201}
+  - component: {fileID: 1762233200}
   m_Layer: 8
   m_Name: Anchor_1 (1)
   m_TagString: Anchor
@@ -2651,6 +2651,46 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1762233200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762233193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4d67c8569bac854ea294ed46512f6ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  batteryHp: 5
+--- !u!54 &1762233201
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1762233193}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1774806687
 GameObject:
   m_ObjectHideFlags: 0
