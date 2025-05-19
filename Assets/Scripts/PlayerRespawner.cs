@@ -3,9 +3,7 @@ using Unity.Netcode;
 
 public class PlayerRespawner : NetworkBehaviour
 {
-    public static Vector3 savedRespawnPos = Vector3.zero;
-
-    // 리스폰 위치 저장
+    private Vector3 savedRespawnPos = Vector3.zero;
     public void SaveRespawnPosition(Vector3 pos)
     {
         savedRespawnPos = pos;
