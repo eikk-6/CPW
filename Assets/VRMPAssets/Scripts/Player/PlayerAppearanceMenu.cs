@@ -6,68 +6,75 @@ using UnityEngine.UI;
 namespace XRMultiplayer
 {
     /// <summary>
-    /// A simple example of how to setup a player appearance menu and utilize the bindable variables.
+    /// 예시: 플레이어 캐릭터(프리팹) 선택 메뉴
     /// </summary>
     public class PlayerAppearanceMenu : MonoBehaviour
     {
-        [SerializeField] Color[] m_PlayerColors;
+        [SerializeField] GameObject[] m_PlayerPrefabs;     // 선택 가능한 캐릭터 프리팹 배열
+        [SerializeField] Transform m_PreviewParent;        // 미리보기(프리팹을 여기에 Instantiate)
         [SerializeField] TMP_InputField m_PlayerNameInputField;
-        [SerializeField] Image m_PlayerIconColor;
 
+        private GameObject m_CurrentPreviewInstance;        // 현재 미리보기 인스턴스
 
         void Awake()
         {
             XRINetworkGameManager.LocalPlayerName.Subscribe(SetPlayerName);
-            XRINetworkGameManager.LocalPlayerColor.Subscribe(SetPlayerColor);
+            XRINetworkGameManager.LocalPlayerPrefabIndex.Subscribe(SetPlayerPrefab); // 프리팹 인덱스 구독
         }
 
         void Start()
         {
-            SetPlayerColor(XRINetworkGameManager.LocalPlayerColor.Value);
+            SetPlayerPrefab(XRINetworkGameManager.LocalPlayerPrefabIndex.Value);
             SetPlayerName(XRINetworkGameManager.LocalPlayerName.Value);
         }
 
         void OnDestroy()
         {
             XRINetworkGameManager.LocalPlayerName.Unsubscribe(SetPlayerName);
-            XRINetworkGameManager.LocalPlayerColor.Unsubscribe(SetPlayerColor);
+            XRINetworkGameManager.LocalPlayerPrefabIndex.Unsubscribe(SetPlayerPrefab);
         }
 
-        /// <summary>
-        /// Use this to set the player's name so it triggers the bindable variable
-        /// </summary>
-        /// <param name="text"></param>
+        // 닉네임 입력값 반영
         public void SubmitNewPlayerName(string text)
         {
             XRINetworkGameManager.LocalPlayerName.Value = text;
         }
 
-        /// <summary>
-        /// Use this to set the player's color so it triggers the bindable variable
-        /// </summary>
-        /// <param name="text"></param>
-        public void SetRandomColor()
+        // 캐릭터 프리팹을 랜덤으로 선택
+        public void SetRandomPrefab()
         {
-            List<Color> availableColors = new(m_PlayerColors);
-            if (availableColors.Remove(XRINetworkGameManager.LocalPlayerColor.Value))
-            {
+            int prefabCount = m_PlayerPrefabs.Length;
+            int currentIdx = XRINetworkGameManager.LocalPlayerPrefabIndex.Value;
 
-                XRINetworkGameManager.LocalPlayerColor.Value = availableColors[Random.Range(0, availableColors.Count)];
-            }
-            else
-            {
-                XRINetworkGameManager.LocalPlayerColor.Value = m_PlayerColors[Random.Range(0, m_PlayerColors.Length)];
-            }
+            // 자기 자신을 제외한 무작위 인덱스 선택
+            List<int> availableIndices = new();
+            for (int i = 0; i < prefabCount; ++i)
+                if (i != currentIdx) availableIndices.Add(i);
+
+            int randomIdx = (availableIndices.Count > 0) ?
+                availableIndices[Random.Range(0, availableIndices.Count)] :
+                currentIdx;
+
+            XRINetworkGameManager.LocalPlayerPrefabIndex.Value = randomIdx;
         }
 
+        // 프리팹 미리보기/변경 함수 (옵저버 콜백)
+        void SetPlayerPrefab(int prefabIndex)
+        {
+            // 기존 미리보기 파괴
+            if (m_CurrentPreviewInstance != null)
+                Destroy(m_CurrentPreviewInstance);
+
+            // 새 프리팹 미리보기(혹은 UI에 Sprite 등으로 보여줘도 됨)
+            GameObject prefab = m_PlayerPrefabs[Mathf.Clamp(prefabIndex, 0, m_PlayerPrefabs.Length - 1)];
+            m_CurrentPreviewInstance = Instantiate(prefab, m_PreviewParent);
+            // 위치/스케일/애니메이션 등 추가 커스텀 가능
+        }
+
+        // 닉네임 콜백(동일)
         void SetPlayerName(string newName)
         {
             m_PlayerNameInputField.text = newName;
-        }
-
-        void SetPlayerColor(Color color)
-        {
-            m_PlayerIconColor.color = color;
         }
     }
 }

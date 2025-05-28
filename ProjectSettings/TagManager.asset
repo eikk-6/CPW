@@ -12,6 +12,8 @@ TagManager:
   - DeathZone
   - Weapon
   - EnemyWeapon
+  - MonsterSpawnPoint
+  - Enemy
   layers:
   - Default
   - TransparentFX
