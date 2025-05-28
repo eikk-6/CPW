@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit.Locomotion.Teleportation;
 
 namespace XRMultiplayer
 {
@@ -9,13 +8,10 @@ namespace XRMultiplayer
         [SerializeField] float m_ResetDistance = 75.0f;
         [SerializeField] Vector3 offlinePosition = new Vector3(0, .5f, -12.0f);
         [SerializeField] Vector3 onlinePosition = new Vector3(0, .15f, 0);
-        TeleportationProvider m_TeleportationProvider;
         Vector3 m_ResetPosition;
         private void Start()
         {
             XRINetworkGameManager.Connected.Subscribe(UpdateResetPosition);
-            m_TeleportationProvider = GetComponentInChildren<TeleportationProvider>();
-
             m_ResetPosition = offlinePosition;
             ResetPlayer();
         }
@@ -33,7 +29,6 @@ namespace XRMultiplayer
             }
         }
 
-        // Update is called once per frame
         void Update()
         {
             if (transform.position.y < m_MinMaxHeight.x)
@@ -57,16 +52,9 @@ namespace XRMultiplayer
 
         void ResetPlayer(Vector3 destination)
         {
-            TeleportRequest teleportRequest = new()
-            {
-                destinationPosition = destination,
-                destinationRotation = Quaternion.identity
-            };
-
-            if (!m_TeleportationProvider.QueueTeleportRequest(teleportRequest))
-            {
-                Utils.LogWarning("Failed to queue teleport request");
-            }
+            // 텔레포트 기능 제거 → 위치 강제 이동
+            transform.position = destination;
+            transform.rotation = Quaternion.identity;
         }
 
         [ContextMenu("Set Player To Online Position")]

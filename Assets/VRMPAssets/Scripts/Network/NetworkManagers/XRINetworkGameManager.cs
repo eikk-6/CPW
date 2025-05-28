@@ -37,6 +37,7 @@ namespace XRMultiplayer
         /// Connecting: Currently connecting to a lobby.
         /// Connected: Connected to a lobby.
         /// </remarks>
+        public static BindableVariable<int> LocalPlayerPrefabIndex = new(0); // 0: 첫번째 프리팹
         public enum ConnectionState
         {
             None,
